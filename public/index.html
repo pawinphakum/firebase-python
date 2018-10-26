@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>::: CatFarm :::</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div align="center">
+      <h1>Hello CatFarm !!</h1>
+      <br>
+
+      AIR : <span id="air_status"></span> :
+      <button type="button" id="air_button">ON</button>
+      <button type="button" id="air_button">OFF</button>
+
+      <br><br><br><br>
+
+      FAN : <span id="fan_status"></span> :
+      <button type="button" id="fan_button">ON</button>
+      <button type="button" id="fan_button">OFF</button>
+
+      <br><br><br><br>
+
+      LIGHT : <span id="light_status"></span> :
+      <button type="button" id="light_button">ON</button>
+      <button type="button" id="light_button">OFF</button>
+
+      <br><br><br><br>
+
+      OUTLET : <span id="outlet_status"></span> :
+      <button type="button" id="outlet_button">ON</button>
+      <button type="button" id="outlet_button">OFF</button>
+
+    </div>
+  </body>
+
+
+  <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyA0pOPKrSYSh8MToDEd7K6ZjfRJ23gc0kU",
+      authDomain: "catfarm-e3e93.firebaseapp.com",
+      databaseURL: "https://catfarm-e3e93.firebaseio.com",
+      projectId: "catfarm-e3e93",
+      storageBucket: "catfarm-e3e93.appspot.com",
+      messagingSenderId: "1056939760114"
+    };
+    firebase.initializeApp(config);
+
+    // Get a reference to the database service
+    var database = firebase.database();
+
+    database.ref('/air').on('value', snap => $("#air_status").text(snap.val()));
+    database.ref('/fan').on('value', snap => $("#fan_status").text(snap.val()));
+    database.ref('/light').on('value', snap => $("#light_status").text(snap.val()));
+    database.ref('/outlet').on('value', snap => $("#outlet_status").text(snap.val()));
+
+
+    $(document).ready(function(){
+      $('[id^=air_button]').click(function(){
+        turn = $(this).text();
+        database.ref('/air').set(turn);
+      });
+
+      $('[id^=fan_button]').click(function(){
+        turn = $(this).text();
+        database.ref('/fan').set(turn);
+      });
+
+      $('[id^=light_button]').click(function(){
+        turn = $(this).text();
+        database.ref('/light').set(turn);
+      });
+
+      $('[id^=outlet_button]').click(function(){
+        turn = $(this).text();
+        database.ref('/outlet').set(turn);
+      });
+    });
+
+  </script>
+
+</html>
