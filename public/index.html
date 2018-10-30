@@ -3,37 +3,18 @@
   <head>
     <title>::: CatFarm :::</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
   </head>
   <body>
     <div align="center">
-      <h1>Hello CatFarm !!</h1>
-      <br>
-
-      AIR : <span id="air_status"></span> :
-      <button type="button" id="air_button">ON</button>
-      <button type="button" id="air_button">OFF</button>
-
-      <br><br><br><br>
-
-      FAN : <span id="fan_status"></span> :
-      <button type="button" id="fan_button">ON</button>
-      <button type="button" id="fan_button">OFF</button>
-
-      <br><br><br><br>
-
-      LIGHT : <span id="light_status"></span> :
-      <button type="button" id="light_button">ON</button>
-      <button type="button" id="light_button">OFF</button>
-
-      <br><br><br><br>
-
-      OUTLET : <span id="outlet_status"></span> :
-      <button type="button" id="outlet_button">ON</button>
-      <button type="button" id="outlet_button">OFF</button>
-
+      <!-- The surrounding HTML is left untouched by FirebaseUI.
+       Your app may use that space for branding, controls and other customizations.-->
+      <h1>Welcome to CatFarm App</h1>
+      <div id="firebaseui-auth-container"></div>
+      <div id="loader">Loading...</div>
     </div>
   </body>
-
 
   <script src="https://www.gstatic.com/firebasejs/5.5.5/firebase.js"></script>
   <script>
@@ -48,37 +29,45 @@
     };
     firebase.initializeApp(config);
 
-    // Get a reference to the database service
-    var database = firebase.database();
+    // Initialize the FirebaseUI Widget using Firebase.
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
-    database.ref('/air').on('value', snap => $("#air_status").text(snap.val()));
-    database.ref('/fan').on('value', snap => $("#fan_status").text(snap.val()));
-    database.ref('/light').on('value', snap => $("#light_status").text(snap.val()));
-    database.ref('/outlet').on('value', snap => $("#outlet_status").text(snap.val()));
+    var uiConfig = {
+      callbacks: {
+        signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+          // User successfully signed in.
+          // Return type determines whether we continue the redirect automatically
+          // or whether we leave that to developer to handle.
+          return true;
+        },
+        uiShown: function() {
+          // The widget is rendered.
+          // Hide the loader.
+          document.getElementById('loader').style.display = 'none';
+        }
+      },
+      // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+      signInFlow: 'popup',
+      signInSuccessUrl: 'remote.html',
+      signInOptions: [
+        // Leave the lines as is for the providers you want to offer your users.
+        // firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+        // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+        // firebase.auth.GithubAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID,
+        // firebase.auth.PhoneAuthProvider.PROVIDER_ID
+      ],
+      // Terms of service url.
+      tosUrl: '<your-tos-url>',
+      // Privacy policy url.
+      privacyPolicyUrl: '<your-privacy-policy-url>'
+    };
+
+    // The start method will wait until the DOM is loaded.
+    ui.start('#firebaseui-auth-container', uiConfig);
 
 
-    $(document).ready(function(){
-      $('[id^=air_button]').click(function(){
-        turn = $(this).text();
-        database.ref('/air').set(turn);
-      });
-
-      $('[id^=fan_button]').click(function(){
-        turn = $(this).text();
-        database.ref('/fan').set(turn);
-      });
-
-      $('[id^=light_button]').click(function(){
-        turn = $(this).text();
-        database.ref('/light').set(turn);
-      });
-
-      $('[id^=outlet_button]').click(function(){
-        turn = $(this).text();
-        database.ref('/outlet').set(turn);
-      });
-    });
 
   </script>
-
 </html>
